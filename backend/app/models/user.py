@@ -9,4 +9,4 @@ class User(Base):
     email = Column(String, unique=True, index=True)
     hashed_password = Column(String, nullable=False)
     level = Column(Integer, default=1)
-    exp = Column(Integer, default=0)
+    xp = Column(Integer, default=0)
