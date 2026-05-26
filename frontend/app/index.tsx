@@ -3,7 +3,7 @@ import {router} from 'expo-router';
 
 export default function Index() {
   useEffect(() => {
-    router.push('/register');
+    router.push('/landing');
   }, []);
 
   return null;

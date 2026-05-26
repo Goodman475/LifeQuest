@@ -19,7 +19,7 @@ export default function Profile() {
                 {
                     text: "Logout",
                     onPress: () => {
-                        router.replace("/(auth)/login");
+                        router.replace("/landing");
                     },
                     style: "destructive",
                 },
