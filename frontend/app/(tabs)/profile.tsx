@@ -1,11 +1,8 @@
 import { View, Text, TouchableOpacity, Alert, ScrollView } from "react-native";
 import { router } from "expo-router";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import {useTheme} from '../../services/theme';
 
 export default function Profile() {
-    const { colors } = useTheme();
-
     const handleLogout = () => {
         Alert.alert(
             "Logout",
@@ -28,14 +25,13 @@ export default function Profile() {
     };
 
   return (
-    <ScrollView 
-      style={{ backgroundColor: colors.background || "#000" }}
+    <ScrollView
       className="flex-1 px-6 pt-16"
     >
       {/* Logout Button */}
       <TouchableOpacity
         onPress={handleLogout}
-        style={{ backgroundColor: colors.error || "#EF4444" }}
+        style={{ backgroundColor: "#EF4444" }}
         className="flex-row items-center justify-center p-4 rounded-lg mt-8"
       >
         <MaterialCommunityIcons 

@@ -36,12 +36,14 @@ export default function Register() {
         />
       <TextInput
         placeholder="Username"
+        placeholderTextColor="#9CA3AF"
         value={username}
         onChangeText={setUsername}
         className="w-full border border-gray-300 rounded-lg px-4 py-2 mb-4"
       />
       <TextInput
         placeholder="Email"
+        placeholderTextColor="#9CA3AF"
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
@@ -50,6 +52,7 @@ export default function Register() {
       />
       <TextInput
         placeholder="Password"
+        placeholderTextColor="#9CA3AF"
         value={password}
         onChangeText={setPassword}
         secureTextEntry

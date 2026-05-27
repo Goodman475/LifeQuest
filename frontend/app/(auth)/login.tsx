@@ -2,7 +2,7 @@ import {useState} from 'react';
 import {View, Text, TextInput, TouchableOpacity, ActivityIndicator, Alert, Image} from 'react-native';
 import {router} from 'expo-router';
 import {api} from '../../services/api';
-import {useTheme} from '../../services/theme';
+
 
 export default function Login() {
 
@@ -36,6 +36,7 @@ export default function Login() {
       />
       <TextInput
         placeholder="Email"
+        placeholderTextColor="#9CA3AF"
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
@@ -44,6 +45,7 @@ export default function Login() {
       />
       <TextInput
         placeholder="Password"
+        placeholderTextColor="#9CA3AF"
         value={password}
         onChangeText={setPassword}
         secureTextEntry

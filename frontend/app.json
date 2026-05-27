@@ -1,30 +1,31 @@
 {
   "expo": {
-    "name": "frontend",
-    "slug": "frontend",
+    "name": "Life Quest",
+    "slug": "lifequest",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "icon": "./assets/logo.jpg",
+    "userInterfaceStyle": "dark",
+    "scheme": "lifequest",
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/logo.jpg",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#050505"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.lifequest.app"
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
-        "monochromeImage": "./assets/android-icon-monochrome.png"
+        "backgroundColor": "#050505",
+        "foregroundImage": "./assets/logo.jpg"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.lifequest.app"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/logo.jpg"
     },
     "plugins": [
       "expo-router"
