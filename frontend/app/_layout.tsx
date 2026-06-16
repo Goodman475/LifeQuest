@@ -1,13 +1,15 @@
 import "../global.css";
-
-import {Stack} from "expo-router";
+import { Stack } from "expo-router";
+import { ThemeProvider } from "../services/theme";
 
 export default function Layout() {
   return (
-    <Stack
-      screenOptions={{
-        headerShown: false,
-      }}
-    />
+    <ThemeProvider>
+      <Stack
+        screenOptions={{
+          headerShown: false,
+        }}
+      />
+    </ThemeProvider>
   );
 }

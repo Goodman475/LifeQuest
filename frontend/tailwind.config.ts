@@ -1,36 +1,33 @@
 import type { Config } from 'tailwindcss';
-
 export default {
   content: ['./app/**/*.{js,jsx,ts,tsx}'],
   presets: [require('nativewind/preset')],
   theme: {
     extend: {
       colors: {
-        // Light mode palette
         light: {
-          background: '#FFFFFF',
-          surface: '#F5F5F5',
-          primary: '#6366F1',
-          secondary: '#8B5CF6',
-          accent: '#EC4899',
-          text: '#1F2937',
-          'text-secondary': '#6B7280',
-          border: '#E5E7EB',
-          success: '#10B981',
+          background: '#F0FDF8',
+          surface: '#FFFFFF',
+          primary: '#00C97A',
+          secondary: '#00B36B',
+          accent: '#00E5A0',
+          text: '#0A1A12',
+          'text-secondary': '#4B7A62',
+          border: '#C6EDD8',
+          success: '#00C97A',
           warning: '#F59E0B',
           error: '#EF4444',
         },
-        // Dark mode palette
         dark: {
-          background: '#0F172A',
-          surface: '#1E293B',
-          primary: '#818CF8',
-          secondary: '#A78BFA',
-          accent: '#F472B6',
-          text: '#F1F5F9',
-          'text-secondary': '#CBD5E1',
-          border: '#334155',
-          success: '#34D399',
+          background: '#0A0F0D',
+          surface: '#111A14',
+          primary: '#00E5A0',
+          secondary: '#00C97A',
+          accent: '#00FF99',
+          text: '#F0FDF8',
+          'text-secondary': '#7ABFA0',
+          border: '#1E3328',
+          success: '#00E5A0',
           warning: '#FBBF24',
           error: '#F87171',
         },

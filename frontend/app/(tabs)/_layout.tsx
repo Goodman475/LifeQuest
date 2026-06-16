@@ -1,28 +1,45 @@
 import { Tabs } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View, useColorScheme } from 'react-native';
 
 export default function Layout() {
+  const scheme = useColorScheme();
+  const dark = scheme === 'dark';
+
+  const tabBarBg        = dark ? '#18181b' : '#ffffff';
+  const tabBarBorder    = dark ? '#27272a' : '#f3f4f6';
+  const activeTint      = dark ? '#4ade80' : '#000000';
+  const inactiveTint    = dark ? '#52525b' : '#999999';
+  const fabBg           = dark ? '#4ade80' : '#000000';
+  const fabIconColor    = dark ? '#000000' : '#ffffff';
+  const shadowColor     = dark ? '#000000' : '#000000';
+
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-
         tabBarShowLabel: true,
-
         tabBarStyle: {
           position: 'absolute',
           left: 20,
           right: 20,
-          elevation: 5,
-          backgroundColor: '#fff',
-          height:70,
+          bottom: 24,
+          elevation: 0,
+          backgroundColor: tabBarBg,
+          borderTopWidth: 1,
+          borderTopColor: tabBarBorder,
+          height: 50,
           paddingBottom: 10,
-          paddingTop: 10,
+          paddingTop: 5,
+          borderRadius: 28,
+          shadowColor,
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: dark ? 0.4 : 0.08,
+          shadowRadius: 16,
+          margin: 10,
         },
-
-        tabBarActiveTintColor: '#000',
-        tabBarInactiveTintColor: '#999',
+        tabBarActiveTintColor: "#fff",
+        tabBarInactiveTintColor: inactiveTint,
       }}
     >
       <Tabs.Screen
@@ -30,25 +47,7 @@ export default function Layout() {
         options={{
           title: '',
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons
-              name="home"
-              size={size}
-              color={color}
-            />
-          ),
-        }}
-      />
-
-      <Tabs.Screen
-        name="community"
-        options={{
-          title: '',
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons
-              name="account-group"
-              size={size}
-              color={color}
-            />
+            <MaterialCommunityIcons name="home" size={size} color={color} />
           ),
         }}
       />
@@ -58,46 +57,28 @@ export default function Layout() {
         name="createquests"
         options={{
           title: '',
-          tabBarIcon: () => (
-            <MaterialCommunityIcons
-              name="plus"
-              size={28}
-              color="#fff"
-            />
-          ),
-
+          tabBarIcon: () => null,
           tabBarButton: (props) => (
             <TouchableOpacity
-              {...props}
-              style={{
-                top: -25,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}
+              {...(props as any)}
+              style={{ top: -25, justifyContent: 'center', alignItems: 'center' }}
             >
               <View
                 style={{
                   width: 60,
                   height: 60,
                   borderRadius: 30,
-                  backgroundColor: '#111',
+                  backgroundColor: "#fff",
                   justifyContent: 'center',
                   alignItems: 'center',
-                  shadowColor: '#000',
-                  shadowOffset: {
-                    width: 0,
-                    height: 5,
-                  },
+                  shadowColor,
+                  shadowOffset: { width: 0, height: 5 },
                   shadowOpacity: 0.3,
                   shadowRadius: 5,
                   elevation: 5,
                 }}
               >
-                <MaterialCommunityIcons
-                  name="plus"
-                  size={28}
-                  color="#fff"
-                />
+                <MaterialCommunityIcons name="plus" size={28} color={fabIconColor} />
               </View>
             </TouchableOpacity>
           ),
@@ -109,25 +90,7 @@ export default function Layout() {
         options={{
           title: '',
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons
-              name="layers-triple"
-              size={size}
-              color={color}
-            />
-          ),
-        }}
-      />
-
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: '',
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons
-              name="account-circle"
-              size={size}
-              color={color}
-            />
+            <MaterialCommunityIcons name="sword-cross" size={size} color={color} />
           ),
         }}
       />
