@@ -1,18 +1,13 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef, useMemo } from "react";
 import {
-  View,
-  Text,
-  TouchableOpacity,
-  ActivityIndicator,
-  FlatList,
-  RefreshControl,
-  Dimensions,
-  ScrollView,
+  View, Text, TouchableOpacity, ActivityIndicator,
+  FlatList, RefreshControl, Dimensions, ScrollView,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { fetchRandomQuests, saveRandomQuest, Quest } from "../../services/api";
 import { router } from "expo-router";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { useTheme } from "../../services/theme";
 
 const { height: windowHeight } = Dimensions.get("window");
 const CARD_HEIGHT = windowHeight * 0.42;
@@ -20,19 +15,14 @@ const CARD_HEIGHT = windowHeight * 0.42;
 type QuestItem = Quest & { type: "random" };
 
 const CATEGORY_ICONS: Record<string, string> = {
-  all: "apps",
-  health: "heart-pulse",
-  strength: "weight-lifter",
-  endurance: "run",
-  knowledge: "book-open-variant",
-  mindfulness: "brain",
-  productivity: "lightning-bolt",
-  social: "account-group",
-  creativity: "palette",
-  finance: "cash",
+  all: "apps", health: "heart-pulse", strength: "weight-lifter",
+  endurance: "run", knowledge: "book-open-variant", mindfulness: "brain",
+  productivity: "lightning-bolt", social: "account-group",
+  creativity: "palette", finance: "cash",
 };
 
 export default function Quests() {
+  const { isDark } = useTheme();
   const [randomQuests, setRandomQuests] = useState<QuestItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -40,11 +30,44 @@ export default function Quests() {
   const [refreshing, setRefreshing] = useState(false);
   const [savingQuestId, setSavingQuestId] = useState<number | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const flatListRef = useRef<FlatList<QuestItem>>(null);
 
   const categories = [
     "all", "health", "strength", "endurance", "knowledge",
     "mindfulness", "productivity", "social", "creativity", "finance",
   ];
+
+  const c = {
+    bg:         isDark ? "#0a0a0a" : "#f9fafb",
+    header:     isDark ? "#111111" : "#ffffff",
+    headerBorder: isDark ? "#1f1f1f" : "#f3f4f6",
+    card:       isDark ? "#111111" : "#ffffff",
+    cardBorder: isDark ? "#1f1f1f" : "#f3f4f6",
+    textPrimary: isDark ? "#f4f4f5" : "#111827",
+    textMuted:  isDark ? "#71717a" : "#6b7280",
+    textLabel:  isDark ? "#52525b" : "#9ca3af",
+    pillActive: isDark ? "#ffffff" : "#111827",
+    pillActiveBorder: isDark ? "#ffffff" : "#111827",
+    pillActiveText: isDark ? "#000000" : "#ffffff",
+    pillInactive: isDark ? "#0a0a0a" : "#ffffff",
+    pillInactiveBorder: isDark ? "#1f1f1f" : "#e5e7eb",
+    pillInactiveText: isDark ? "#52525b" : "#6b7280",
+    badge:      isDark ? "#1f1f1f" : "#f3f4f6",
+    badgeBorder: isDark ? "#3f3f46" : "#e5e7eb",
+    badgeText:  isDark ? "#a1a1aa" : "#6b7280",
+    xpBg:       isDark ? "#ffffff" : "#111827",
+    xpText:     isDark ? "#000000" : "#ffffff",
+    hint:       isDark ? "#0a0a0a" : "#f9fafb",
+    hintBorder: isDark ? "#1f1f1f" : "#f3f4f6",
+    hintText:   isDark ? "#52525b" : "#9ca3af",
+    btn:        isDark ? "#ffffff" : "#111827",
+    btnText:    isDark ? "#000000" : "#ffffff",
+    btnDisabled: isDark ? "#1f1f1f" : "#f3f4f6",
+    btnDisabledText: isDark ? "#52525b" : "#9ca3af",
+    emptyIcon:  isDark ? "#3f3f46" : "#d1d5db",
+    emptyText:  isDark ? "#52525b" : "#9ca3af",
+    tint:       isDark ? "#ffffff" : "#111827",
+  };
 
   const loadRandomQuests = useCallback(async (append = false) => {
     try {
@@ -84,90 +107,83 @@ export default function Quests() {
     }
   };
 
-  const filteredQuests = selectedCategory === "all"
-    ? randomQuests
-    : randomQuests.filter((q) => q.skill_type === selectedCategory);
+  const filteredQuests = useMemo(() => {
+    if (selectedCategory === "all") return randomQuests;
+    return randomQuests.filter((q) => q.skill_type === selectedCategory);
+  }, [randomQuests, selectedCategory]);
+
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category);
+    requestAnimationFrame(() => {
+      flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
+    });
+  };
 
   const renderQuest = ({ item }: { item: QuestItem }) => {
     const saving = savingQuestId === item.id;
-
     return (
       <View style={{ height: CARD_HEIGHT, paddingHorizontal: 20, paddingVertical: 8 }}>
         <View
-          className="flex-1 rounded-3xl bg-[#111111] border border-[#1f1f1f] p-5 justify-between"
           style={{
-            shadowColor: "#000",
-            shadowOpacity: 0.4,
-            shadowRadius: 12,
-            shadowOffset: { width: 0, height: 4 },
-            elevation: 3,
+            flex: 1, borderRadius: 24, backgroundColor: c.card,
+            borderWidth: 1, borderColor: c.cardBorder, padding: 20,
+            justifyContent: "space-between",
+            shadowColor: "#000", shadowOpacity: isDark ? 0.4 : 0.06,
+            shadowRadius: 12, shadowOffset: { width: 0, height: 4 }, elevation: 3,
           }}
         >
-          {/* TOP */}
           <View>
-            {/* BADGES ROW */}
-            <View className="flex-row items-center justify-between mb-4">
-              {/* LEFT: SKILL + DIFFICULTY */}
-              <View className="flex-row items-center gap-2 flex-1 flex-wrap">
+            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 8, flex: 1, flexWrap: "wrap" }}>
                 {item.skill_type ? (
-                  <View className="px-2.5 py-1 rounded-full border border-zinc-700 bg-zinc-800">
-                    <Text className="text-xs font-bold capitalize text-zinc-300">
+                  <View style={{ paddingHorizontal: 10, paddingVertical: 4, borderRadius: 99, borderWidth: 1, backgroundColor: c.badge, borderColor: c.badgeBorder }}>
+                    <Text style={{ fontSize: 11, fontWeight: "700", color: c.badgeText, textTransform: "capitalize" }}>
                       {item.skill_type}
                     </Text>
                   </View>
                 ) : null}
                 {item.difficulty ? (
-                  <View className="px-2.5 py-1 rounded-full border border-zinc-700 bg-zinc-800">
-                    <Text className="text-xs font-bold uppercase text-zinc-400">
+                  <View style={{ paddingHorizontal: 10, paddingVertical: 4, borderRadius: 99, borderWidth: 1, backgroundColor: c.badge, borderColor: c.badgeBorder }}>
+                    <Text style={{ fontSize: 11, fontWeight: "700", color: c.badgeText, textTransform: "uppercase" }}>
                       {item.difficulty}
                     </Text>
                   </View>
                 ) : null}
               </View>
-
-              {/* RIGHT: XP */}
-              <View className="bg-white px-3 py-1.5 rounded-xl ml-2">
-                <Text className="text-xs font-extrabold text-black">
-                  +{item.xp_reward} XP
-                </Text>
+              <View style={{ backgroundColor: c.xpBg, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12, marginLeft: 8 }}>
+                <Text style={{ fontSize: 11, fontWeight: "800", color: c.xpText }}>+{item.xp_reward} XP</Text>
               </View>
             </View>
 
-            {/* TITLE */}
-            <Text className="text-xl font-extrabold text-zinc-100 leading-tight mb-2">
+            <Text style={{ fontSize: 20, fontWeight: "800", color: c.textPrimary, lineHeight: 28, marginBottom: 8 }}>
               {item.title}
             </Text>
-
-            {/* DESCRIPTION */}
             {item.description ? (
-              <Text className="text-sm text-zinc-500 leading-5" numberOfLines={3}>
+              <Text style={{ fontSize: 14, color: c.textMuted, lineHeight: 20 }} numberOfLines={3}>
                 {item.description}
               </Text>
             ) : null}
           </View>
 
-          {/* BOTTOM */}
           <View>
-            {/* HINT */}
-            <View className="flex-row items-center gap-2 bg-[#0a0a0a] rounded-2xl px-3 py-2.5 mb-4 border border-[#1f1f1f]">
-              <Ionicons name="information-circle-outline" size={14} color="#52525b" />
-              <Text className="text-xs text-zinc-600 flex-1">
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 8, backgroundColor: c.hint, borderRadius: 16, paddingHorizontal: 12, paddingVertical: 10, marginBottom: 16, borderWidth: 1, borderColor: c.hintBorder }}>
+              <Ionicons name="information-circle-outline" size={14} color={c.hintText} />
+              <Text style={{ fontSize: 12, color: c.hintText, flex: 1 }}>
                 Tap "Choose" to add this to your quest list
               </Text>
             </View>
 
-            {/* BUTTON */}
             <TouchableOpacity
               onPress={() => handleChooseQuest(item)}
               disabled={saving}
-              className={`rounded-2xl py-4 items-center flex-row justify-center gap-2 ${
-                saving ? "bg-[#1f1f1f]" : "bg-white"
-              }`}
+              style={{
+                borderRadius: 16, paddingVertical: 16, alignItems: "center",
+                flexDirection: "row", justifyContent: "center", gap: 8,
+                backgroundColor: saving ? c.btnDisabled : c.btn,
+              }}
             >
-              {!saving && (
-                <Ionicons name="add-circle-outline" size={18} color="#000" />
-              )}
-              <Text className={`font-bold text-sm ${saving ? "text-zinc-600" : "text-black"}`}>
+              {!saving && <Ionicons name="add-circle-outline" size={18} color={c.btnText} />}
+              <Text style={{ fontWeight: "700", fontSize: 14, color: saving ? c.btnDisabledText : c.btnText }}>
                 {saving ? "Saving..." : "Choose Quest"}
               </Text>
             </TouchableOpacity>
@@ -178,50 +194,34 @@ export default function Quests() {
   };
 
   return (
-    <View className="flex-1 bg-[#0a0a0a]">
-
-      {/* HEADER */}
-      <View className="bg-[#111111] px-6 pt-16 pb-4 border-b border-[#1f1f1f]">
-        <Text className="text-xs font-bold tracking-widest uppercase text-zinc-500 mb-1">
+    <View style={{ flex: 1, backgroundColor: c.bg }}>
+      <View style={{ backgroundColor: c.header, paddingHorizontal: 24, paddingTop: 64, paddingBottom: 16, borderBottomWidth: 1, borderBottomColor: c.headerBorder }}>
+        <Text style={{ fontSize: 11, fontWeight: "700", letterSpacing: 2, textTransform: "uppercase", color: c.textLabel, marginBottom: 4 }}>
           Quest Explorer
         </Text>
-        <Text className="text-2xl font-extrabold text-zinc-100">
-          Discover challenges
-        </Text>
-        <Text className="text-sm text-zinc-500 mt-1">
-          Scroll through and pick what fits your goals.
-        </Text>
+        <Text style={{ fontSize: 24, fontWeight: "800", color: c.textPrimary }}>Discover challenges</Text>
+        <Text style={{ fontSize: 14, color: c.textMuted, marginTop: 4 }}>Scroll through and pick what fits your goals.</Text>
       </View>
 
-      {/* CATEGORY PILLS */}
-      <View className="bg-[#111111] border-b border-[#1f1f1f] py-3">
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ paddingHorizontal: 16, gap: 8 }}
-        >
+      <View style={{ backgroundColor: c.header, borderBottomWidth: 1, borderBottomColor: c.headerBorder, paddingVertical: 12 }}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 16, gap: 8 }}>
           {categories.map((cat) => {
             const isActive = selectedCategory === cat;
             const icon = CATEGORY_ICONS[cat] ?? "help-circle";
             return (
               <TouchableOpacity
                 key={cat}
-                onPress={() => setSelectedCategory(cat)}
+                onPress={() => handleCategoryChange(cat)}
                 activeOpacity={0.8}
-                className={`flex-row items-center gap-1.5 px-4 h-9 rounded-full border ${
-                  isActive
-                    ? "bg-white border-white"
-                    : "bg-[#0a0a0a] border-[#1f1f1f]"
-                }`}
+                style={{
+                  flexDirection: "row", alignItems: "center", gap: 6,
+                  paddingHorizontal: 16, height: 36, borderRadius: 99, borderWidth: 1,
+                  backgroundColor: isActive ? c.pillActive : c.pillInactive,
+                  borderColor: isActive ? c.pillActiveBorder : c.pillInactiveBorder,
+                }}
               >
-                <MaterialCommunityIcons
-                  name={icon as any}
-                  size={13}
-                  color={isActive ? "#000" : "#52525b"}
-                />
-                <Text className={`text-xs font-semibold capitalize ${
-                  isActive ? "text-black" : "text-zinc-600"
-                }`}>
+                <MaterialCommunityIcons name={icon as any} size={13} color={isActive ? c.pillActiveText : c.pillInactiveText} />
+                <Text style={{ fontSize: 12, fontWeight: "600", textTransform: "capitalize", color: isActive ? c.pillActiveText : c.pillInactiveText }}>
                   {cat}
                 </Text>
               </TouchableOpacity>
@@ -230,25 +230,22 @@ export default function Quests() {
         </ScrollView>
       </View>
 
-      {/* CONTENT */}
       {loading && !refreshing ? (
-        <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#ffffff" />
-          <Text className="text-zinc-600 text-sm mt-3">Loading quests...</Text>
+        <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+          <ActivityIndicator size="large" color={c.tint} />
+          <Text style={{ color: c.textMuted, fontSize: 14, marginTop: 12 }}>Loading quests...</Text>
         </View>
       ) : error ? (
-        <View className="px-6 pt-8 items-center">
-          <MaterialCommunityIcons name="alert-circle-outline" size={40} color="#3f3f46" />
-          <Text className="text-zinc-500 text-sm text-center mt-3 mb-5">{error}</Text>
-          <TouchableOpacity
-            onPress={() => loadRandomQuests(false)}
-            className="rounded-2xl bg-white px-8 py-4"
-          >
-            <Text className="text-black font-bold">Retry</Text>
+        <View style={{ paddingHorizontal: 24, paddingTop: 32, alignItems: "center" }}>
+          <MaterialCommunityIcons name="alert-circle-outline" size={40} color={c.emptyIcon} />
+          <Text style={{ color: c.textMuted, fontSize: 14, textAlign: "center", marginTop: 12, marginBottom: 20 }}>{error}</Text>
+          <TouchableOpacity onPress={() => loadRandomQuests(false)} style={{ backgroundColor: c.btn, borderRadius: 16, paddingHorizontal: 32, paddingVertical: 16 }}>
+            <Text style={{ color: c.btnText, fontWeight: "700" }}>Retry</Text>
           </TouchableOpacity>
         </View>
       ) : (
         <FlatList
+          ref={flatListRef}
           data={filteredQuests}
           renderItem={renderQuest}
           keyExtractor={(item) => String(item.id)}
@@ -262,22 +259,22 @@ export default function Quests() {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={() => { setRefreshing(true); loadRandomQuests(false); }}
-              tintColor="#ffffff"
+              tintColor={c.tint}
             />
           }
           contentContainerStyle={{ paddingVertical: 8, paddingBottom: 80 }}
           ListEmptyComponent={
-            <View className="items-center py-16 px-6 gap-3">
-              <MaterialCommunityIcons name="compass-off-outline" size={44} color="#3f3f46" />
-              <Text className="text-zinc-600 text-sm text-center">
+            <View style={{ alignItems: "center", paddingVertical: 64, paddingHorizontal: 24, gap: 12 }}>
+              <MaterialCommunityIcons name="compass-off-outline" size={44} color={c.emptyIcon} />
+              <Text style={{ color: c.emptyText, fontSize: 14, textAlign: "center" }}>
                 No quests in this category.{"\n"}Try a different filter.
               </Text>
             </View>
           }
           ListFooterComponent={
             fetchingMore ? (
-              <View className="py-6 items-center">
-                <ActivityIndicator size="small" color="#ffffff" />
+              <View style={{ paddingVertical: 24, alignItems: "center" }}>
+                <ActivityIndicator size="small" color={c.tint} />
               </View>
             ) : null
           }

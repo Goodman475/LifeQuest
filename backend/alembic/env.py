@@ -12,7 +12,7 @@ if config.config_file_name is not None:
 
 # import your models and metadata
 from app.database.base import Base
-from app.models import user, quest  # import all models for autogenerate
+from app.models import user, skill, quest, user_quest, daily_quest, user_custom_quest, feedback  # import all models for autogenerate
 
 # set target_metadata for 'autogenerate' support
 target_metadata = Base.metadata

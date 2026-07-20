@@ -14,7 +14,10 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.lifequest.app"
+      "bundleIdentifier": "com.lifequest.app",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -29,6 +32,13 @@
     },
     "plugins": [
       "expo-router"
-    ]
+    ],
+    "extra": {
+      "API_URL": "http://127.0.0.1:8000",
+      "router": {},
+      "eas": {
+        "projectId": "cf22975d-e9b4-49f6-8909-763484eb417f"
+      }
+    }
   }
 }

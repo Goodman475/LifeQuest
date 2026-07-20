@@ -1,12 +1,15 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-type Theme = "light" | "dark";
+type Theme = "light" | "dark" | "system";
 
 type ThemeContextType = {
   theme: Theme;
+  mode: Theme;
+  setMode: (mode: Theme) => void;
   toggleTheme: () => void;
   isDark: boolean;
+  colors: typeof darkColors;
   c: typeof darkColors;
 };
 
@@ -50,8 +53,11 @@ const lightColors = {
 
 const ThemeContext = createContext<ThemeContextType>({
   theme: "dark",
+  mode: "dark",
+  setMode: () => {},
   toggleTheme: () => {},
   isDark: true,
+  colors: darkColors,
   c: darkColors,
 });
 
@@ -64,6 +70,15 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
+  const setMode = async (mode: Theme) => {
+    if (mode === "system") {
+      // For now, map system to dark mode by default
+      mode = "dark";
+    }
+    setTheme(mode);
+    await AsyncStorage.setItem("theme", mode);
+  };
+
   const toggleTheme = async () => {
     const next = theme === "dark" ? "light" : "dark";
     setTheme(next);
@@ -74,8 +89,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     <ThemeContext.Provider
       value={{
         theme,
+        mode: theme,
+        setMode,
         toggleTheme,
         isDark: theme === "dark",
+        colors: theme === "dark" ? darkColors : lightColors,
         c: theme === "dark" ? darkColors : lightColors,
       }}
     >
