@@ -46,7 +46,7 @@ export default function Login() {
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: c.bg, paddingHorizontal: 16 }}>
 
       <Image
-        source={require('../../assets/logo.jpg')}
+        source={require('../../assets/logo.png')}
         style={{ width: 240, height: 240, marginBottom: 16, borderRadius: 16 }}
         resizeMode="contain"
       />

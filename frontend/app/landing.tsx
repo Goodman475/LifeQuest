@@ -43,7 +43,7 @@ export default function Landing() {
   return (
     <View className="flex-1 items-center justify-center bg-black px-4">
       <Image
-        source={require('../assets/logo.jpg')}
+        source={require('../assets/logo.png')}
         className="w-60 h-60 mb-8 rounded-2xl"
         resizeMode="contain"
       />

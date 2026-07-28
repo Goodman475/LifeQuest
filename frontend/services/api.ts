@@ -2,10 +2,12 @@ import axios from 'axios';
 import Constants from 'expo-constants';
 
 const expoConfig = Constants.expoConfig || Constants.manifest;
-const apiUrl =
-  (typeof process !== 'undefined' && process.env?.API_URL)
+const configuredApiUrl =
+  (typeof process !== 'undefined' && (process.env?.EXPO_PUBLIC_API_URL || process.env?.API_URL))
     || expoConfig?.extra?.API_URL
-    || 'http://127.0.0.1:8000';
+    || (__DEV__ ? 'http://127.0.0.1:8000' : 'https://api.lifequest.app');
+
+const apiUrl = configuredApiUrl;
 
 export type Character = {
   class_name: string;

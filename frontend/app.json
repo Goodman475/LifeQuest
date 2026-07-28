@@ -4,17 +4,17 @@
     "slug": "lifequest",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/logo.jpg",
+    "icon": "./assets/logo.png",
     "userInterfaceStyle": "dark",
     "scheme": "lifequest",
     "splash": {
-      "image": "./assets/logo.jpg",
+      "image": "./assets/logo.png",
       "resizeMode": "contain",
       "backgroundColor": "#050505"
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.lifequest.app",
+      "bundleIdentifier": "com.shift.lifequest",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
@@ -22,19 +22,19 @@
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#050505",
-        "foregroundImage": "./assets/logo.jpg"
+        "foregroundImage": "./assets/logo.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.lifequest.app"
+      "package": "com.shift.lifequest"
     },
     "web": {
-      "favicon": "./assets/logo.jpg"
+      "favicon": "./assets/logo.png"
     },
     "plugins": [
       "expo-router"
     ],
     "extra": {
-      "API_URL": "http://127.0.0.1:8000",
+      "API_URL": "https://api.lifequest.app",
       "router": {},
       "eas": {
         "projectId": "cf22975d-e9b4-49f6-8909-763484eb417f"
