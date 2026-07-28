@@ -8,7 +8,6 @@ export default ({ config }) => ({
   ...config,
   plugins: [
     ...(config.plugins || []),
-    "expo-router",
     "expo-font",
   ],
   extra: {
