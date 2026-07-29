@@ -34,7 +34,7 @@
       "expo-router"
     ],
     "extra": {
-      "API_URL": "https://api.lifequest.app",
+      "API_URL": "https://lifequest-4tc4.onrender.com",
       "router": {},
       "eas": {
         "projectId": "cf22975d-e9b4-49f6-8909-763484eb417f"
