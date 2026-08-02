@@ -2,23 +2,19 @@ import hashlib
 from datetime import datetime, timedelta
 
 from jose import jwt
-from passlib.context import CryptContext
 
 from app.config import settings
-
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 class PasswordManager:
     @staticmethod
     def _normalize(password: str) -> str:
-        return password.strip()
+        return password.strip().lower()
 
     @staticmethod
     def hash_password(password: str) -> str:
         normalized = PasswordManager._normalize(password)
-        return pwd_context.hash(normalized)
+        return f"sha256${hashlib.sha256(normalized.encode('utf-8')).hexdigest()}"
 
     @staticmethod
     def verify_password(plain_password: str, hashed_password: str) -> bool:
@@ -26,18 +22,19 @@ class PasswordManager:
             return False
 
         normalized = PasswordManager._normalize(plain_password)
+        expected_hash = hashlib.sha256(normalized.encode("utf-8")).hexdigest()
         legacy_candidates = {
-            hashlib.sha256(normalized.encode("utf-8")).hexdigest(),
-            hashlib.sha256(normalized.lower().encode("utf-8")).hexdigest(),
+            expected_hash,
+            hashlib.sha256(plain_password.strip().encode("utf-8")).hexdigest(),
         }
 
         if hashed_password in legacy_candidates:
             return True
 
-        try:
-            return pwd_context.verify(normalized, hashed_password)
-        except Exception:
-            return False
+        if hashed_password.startswith("sha256$"):
+            return hashed_password.split("$", 1)[1] == expected_hash
+
+        return False
 
 SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = settings.ALGORITHM

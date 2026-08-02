@@ -19,3 +19,11 @@ def test_verify_password_supports_legacy_sha256_hashes():
 
     assert verify_password(password, legacy_hash) is True
     assert verify_password("wrong-password", legacy_hash) is False
+
+
+def test_verify_password_supports_prefixed_sha256_hashes():
+    password = "password123"
+    prefixed_hash = hash_password(password)
+
+    assert verify_password(password, prefixed_hash) is True
+    assert verify_password("wrong-password", prefixed_hash) is False
