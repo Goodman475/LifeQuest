@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 from app.database.db import SessionLocal
 from app.services.auth_services import create_user, authenticate_user
@@ -20,14 +21,22 @@ def get_db():
 
 @router.post("/register")
 def register(user: UserRegister, db: Session = Depends(get_db)):
-    new_user = create_user(db, user.username, user.email, user.password)
+    try:
+        new_user = create_user(db, user.username, user.email, user.password)
+    except SQLAlchemyError as exc:
+        raise HTTPException(status_code=503, detail="Database unavailable") from exc
+
     if not new_user:
         raise HTTPException(status_code=400, detail="User already exists")
     return {"message": "User registered successfully"}
 
 @router.post("/login")
 def login(user: UserLogin, db: Session = Depends(get_db)):
-    auth_user = authenticate_user(db, user.email, user.password)
+    try:
+        auth_user = authenticate_user(db, user.email, user.password)
+    except SQLAlchemyError as exc:
+        raise HTTPException(status_code=503, detail="Database unavailable") from exc
+
     if not auth_user:
         raise HTTPException(status_code=401, detail="Invalid credentials")
     token = create_access_token({"sub": auth_user.email})

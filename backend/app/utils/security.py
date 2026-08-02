@@ -1,12 +1,17 @@
-from passlib.context import CryptContext
+import hashlib
 from datetime import datetime, timedelta
 from jose import jwt
 from app.config import settings
 
-pwd_context = CryptContext(
-    schemes=["pbkdf2_sha256", "bcrypt"],
-    deprecated="auto"
-)
+
+class PasswordManager:
+    @staticmethod
+    def hash_password(password: str) -> str:
+        return hashlib.sha256(password.encode("utf-8")).hexdigest()
+
+    @staticmethod
+    def verify_password(plain_password: str, hashed_password: str) -> bool:
+        return PasswordManager.hash_password(plain_password) == hashed_password
 
 SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = settings.ALGORITHM
@@ -17,17 +22,11 @@ ACCESS_TOKEN_EXPIRE_MINUTES = settings.ACCESS_TOKEN_EXPIRE_MINUTES
 # -----------------------------
 
 def hash_password(password: str) -> str:
-    try:
-        return pwd_context.hash(password)
-    except Exception:
-        return pwd_context.hash(password, scheme="pbkdf2_sha256")
+    return PasswordManager.hash_password(password)
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    try:
-        return pwd_context.verify(plain_password, hashed_password)
-    except Exception:
-        return False
+    return PasswordManager.verify_password(plain_password, hashed_password)
 
 
 # -----------------------------
