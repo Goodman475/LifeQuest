@@ -6,12 +6,18 @@ from app.config import settings
 
 class PasswordManager:
     @staticmethod
+    def _normalize(password: str) -> str:
+        return password.strip().lower()
+
+    @staticmethod
     def hash_password(password: str) -> str:
-        return hashlib.sha256(password.encode("utf-8")).hexdigest()
+        normalized = PasswordManager._normalize(password)
+        return hashlib.sha256(normalized.encode("utf-8")).hexdigest()
 
     @staticmethod
     def verify_password(plain_password: str, hashed_password: str) -> bool:
-        return PasswordManager.hash_password(plain_password) == hashed_password
+        normalized = PasswordManager._normalize(plain_password)
+        return hashlib.sha256(normalized.encode("utf-8")).hexdigest() == hashed_password
 
 SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = settings.ALGORITHM
