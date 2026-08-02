@@ -2,7 +2,10 @@ import axios from 'axios';
 import Constants from 'expo-constants';
 
 const expoConfig = Constants.expoConfig || Constants.manifest;
-const apiUrl = expoConfig?.extra?.API_URL || 'https://lifequest-4tc4.onrender.com';
+const apiUrl = expoConfig?.extra?.API_URL
+  || process.env.EXPO_PUBLIC_API_URL
+  || process.env.API_URL
+  || 'https://lifequest-4tc4.onrender.com';
 
 export type Character = {
   class_name: string;
