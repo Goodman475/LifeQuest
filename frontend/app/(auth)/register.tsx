@@ -7,6 +7,7 @@ export default function Register() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const dark = useColorScheme() === 'dark';
 
@@ -23,10 +24,16 @@ export default function Register() {
   };
 
   const handleRegister = async () => {
-    if (!username || !email || !password) {
+    if (!username || !email || !password || !confirmPassword) {
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
+
+    if (password !== confirmPassword) {
+      Alert.alert('Error', 'Passwords do not match');
+      return;
+    }
+
     setLoading(true);
     try {
       await api.post('/auth/register', { username, email, password });
@@ -79,6 +86,19 @@ export default function Register() {
         placeholderTextColor={c.placeholder}
         value={password}
         onChangeText={setPassword}
+        secureTextEntry
+        style={{
+          width: '100%', borderWidth: 1, borderColor: c.inputBorder,
+          backgroundColor: c.input, borderRadius: 10, paddingHorizontal: 16,
+          paddingVertical: 12, marginBottom: 12, color: c.textPrimary, fontSize: 15,
+        }}
+      />
+
+      <TextInput
+        placeholder="Confirm Password"
+        placeholderTextColor={c.placeholder}
+        value={confirmPassword}
+        onChangeText={setConfirmPassword}
         secureTextEntry
         style={{
           width: '100%', borderWidth: 1, borderColor: c.inputBorder,
