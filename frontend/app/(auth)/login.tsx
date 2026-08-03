@@ -35,8 +35,9 @@ export default function Login() {
       await AsyncStorage.setItem('user_id', String(user_id));
       setAuthToken(access_token);
       router.replace('/home');
-    } catch {
-      Alert.alert('Error', 'Login failed. Please check your credentials and try again.');
+    } catch (error: any) {
+      const message = error?.response?.data?.detail || 'Login failed. Please check your credentials and try again.';
+      Alert.alert('Error', message);
     } finally {
       setLoading(false);
     }
