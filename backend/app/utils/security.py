@@ -1,4 +1,5 @@
 import hashlib
+import os
 from datetime import datetime, timedelta
 
 from jose import jwt
@@ -36,9 +37,9 @@ class PasswordManager:
 
         return False
 
-SECRET_KEY = settings.SECRET_KEY
-ALGORITHM = settings.ALGORITHM
-ACCESS_TOKEN_EXPIRE_MINUTES = settings.ACCESS_TOKEN_EXPIRE_MINUTES
+SECRET_KEY = (settings.SECRET_KEY or os.getenv("SECRET_KEY") or "dev-secret").strip()
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = int(settings.ACCESS_TOKEN_EXPIRE_MINUTES or os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "1440"))
 
 # -----------------------------
 # PASSWORD HANDLING 
